@@ -9,7 +9,7 @@ namespace MVC_CRUD.DAL
     {
         public  EmployeeContext(DbContextOptions<EmployeeContext>options):base(options)
         {
-            ///con
+           
         }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<MVC_CRUD.Models.EmployeeViewModel> EmployeeViewModel { get; set; }

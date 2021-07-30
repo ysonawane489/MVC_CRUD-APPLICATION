@@ -64,7 +64,7 @@ namespace MVC_CRUD.DAL
             try
             {
                 var validate = (from user in _dbcontext.Userss
-                                where user.UserName == login.UserName && user.Password == login.Password
+                                where user.UserName == login.UserName && user.Password == login.Password && user.Uid==login.Uid
                                 select user).FirstOrDefault();
                 if (validate == null)
                 {

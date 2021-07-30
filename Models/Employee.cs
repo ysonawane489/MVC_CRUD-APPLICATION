@@ -13,6 +13,9 @@ namespace MVC_CRUD.Models
         public string EmpName { get; set; }
         public int Age { get; set; }
         public string EmailId {get;set;}
+        public string JoiningDate { get; set; }
+        public string Designation { get; set; }
+        public int CTC { get; set; }
 
     }
 }

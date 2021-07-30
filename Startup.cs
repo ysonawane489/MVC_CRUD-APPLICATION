@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MVC_CRUD.DAL;
+using MVC_CRUD.Filterss;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,13 @@ namespace MVC_CRUD
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddControllersWithViews(config =>
+            config.Filters.Add(typeof(CustomExceptionFilter)));
             //fetching connn string from appseting,json
             var ConnectionString = Configuration.GetConnectionString("constr");
             //entity framework
@@ -56,7 +61,7 @@ namespace MVC_CRUD
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Employee}/{action=Autherize}/{id?}");
+                    pattern: "{controller=Employee}/{action=LogIn}/{id?}");
             });
         }
     }

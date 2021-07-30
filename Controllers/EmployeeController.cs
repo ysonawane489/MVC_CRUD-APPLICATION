@@ -1,10 +1,11 @@
 ﻿
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC_CRUD.DAL;
 using MVC_CRUD.Models;
 using System.Linq;
-
+using static MVC_CRUD.Filterss.CacheResourceFilter;
 namespace MVC_CRUD.Controllers
 {
     public class EmployeeController : Controller
@@ -14,6 +15,7 @@ namespace MVC_CRUD.Controllers
         {
             empRepo = new EmployeeRepository(_dbcontext);
         }
+     //  [Authorize("Read")]
         public IActionResult Index()
         {
             var test = empRepo.GetEmployees().ToList();
@@ -22,21 +24,28 @@ namespace MVC_CRUD.Controllers
                 EmpId = e.EmpId,
                 EmpName = e.EmpName,
                 Age = e.Age,
-                EmailId = e.EmailId
+                EmailId = e.EmailId,
+                JoiningDate=e.JoiningDate,
+                Designation=e.Designation,
+                CTC=e.CTC
 
             }).ToList();
             return View(lstEmployees);
+            
         }
 
-
+       
         [HttpGet]
+      //  [Authorize("Read")]
         public IActionResult Create()
         {
             EmployeeViewModel emp = new EmployeeViewModel();
             return View(emp);
         }
 
+       
         [HttpPost]
+       // [Authorize("Read")]
         public IActionResult Create(EmployeeViewModel emp)
 
         {
@@ -47,7 +56,10 @@ namespace MVC_CRUD.Controllers
                     EmpId = emp.EmpId,
                     EmpName = emp.EmpName,
                     Age = emp.Age,
-                    EmailId = emp.EmailId
+                    EmailId = emp.EmailId,
+                    JoiningDate = emp.JoiningDate,
+                    Designation = emp.Designation,
+                    CTC = emp.CTC
                 };
                 empRepo.CreateEmployee(empEntity);
             }
@@ -62,7 +74,10 @@ namespace MVC_CRUD.Controllers
                 EmpId = e.EmpId,
                 EmpName = e.EmpName,
                 Age = e.Age,
-                EmailId = e.EmailId
+                EmailId = e.EmailId,
+                JoiningDate = e.JoiningDate,
+                Designation = e.Designation,
+                CTC = e.CTC
             }).FirstOrDefault();
             return View(selecteEmployee);
         }
@@ -77,7 +92,10 @@ namespace MVC_CRUD.Controllers
                     EmpId = emp.EmpId,
                     EmpName = emp.EmpName,
                     Age = emp.Age,
-                    EmailId = emp.EmailId
+                    EmailId = emp.EmailId,
+                    JoiningDate = emp.JoiningDate,
+                    Designation = emp.Designation,
+                    CTC = emp.CTC
                 };
                 empRepo.EditEmployee(empEntity);
             }
@@ -92,7 +110,10 @@ namespace MVC_CRUD.Controllers
                 EmpId = e.EmpId,
                 EmpName = e.EmpName,
                 Age = e.Age,
-                EmailId = e.EmailId
+                EmailId = e.EmailId,
+                JoiningDate = e.JoiningDate,
+                Designation = e.Designation,
+                CTC = e.CTC
             }).FirstOrDefault();
             return View(selecteEmployee);
         }
@@ -106,7 +127,10 @@ namespace MVC_CRUD.Controllers
                 EmpId = e.EmpId,
                 EmpName = e.EmpName,
                 Age = e.Age,
-                EmailId = e.EmailId
+                EmailId = e.EmailId,
+                JoiningDate = e.JoiningDate,
+                Designation = e.Designation,
+                CTC = e.CTC
             }).FirstOrDefault();
             return View(selecteEmployee);
         }
@@ -121,22 +145,27 @@ namespace MVC_CRUD.Controllers
         }
 
         [HttpGet]
-        public IActionResult Autherize()
+        // [ValidateModel]
+        [CacheResource]
+        public IActionResult LogIn()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult Autherize(string username, string password)
+        // [ValidateModel]
+        [CacheResource]
+        public IActionResult LogIn( int uid ,string username, string password)
         {
-            LoginViewModel validate = empRepo.GetUsers().Where(i => i.UserName == username && i.Password == password).Select(e => new LoginViewModel
+            LoginViewModel ValidUser = empRepo.GetUsers().Where(i =>i.Uid==uid && i.UserName == username && i.Password == password).Select(e => new LoginViewModel
             {
+                
                 UserName = e.UserName,
                 Password = e.Password
             }).FirstOrDefault();
-            if (validate == null)
+            if (ValidUser == null)
             {
-                ViewBag.errormessage = "Enter Invalid Username and Password";
-                return RedirectToAction("Autherize");
+                ViewBag.errormessage = "Enter Valid UserID,  Username and Password";
+                return RedirectToAction("LogIn");
             }
             return RedirectToAction("Index");
         }
